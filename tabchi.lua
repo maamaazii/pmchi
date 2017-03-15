@@ -227,7 +227,7 @@ _اضافه کردن مخاطبين ربات به گروه_
 _دريافت لينک هاي ذخيره شده توسط ربات_
 */contactlist*
 _دريافت مخاطبان ذخيره شده توسط ربات_
-*Join* _us_ >> @TeleDiamondCh
+*Join* _us_ >> @maamaazii
 ]]
     return text
   end
@@ -518,17 +518,19 @@ function process_stats(msg)
     add(msg.chat_id_)
   end
 end
-function process_links(text_)
-  if text_:match("https://t.me/joinchat/%S+") or text_:match("https://telegram.me/joinchat/%S+") then
+local process_links
+function process_links(text)
+  if text:match("https://telegram.me/joinchat/%S+") or text:match("https://t.me/joinchat/%S+") or text:match("https://telegram.dog/joinchat/%S+") then
+    text = text:gsub("t.me", "telegram.me")
     local matches = {
-      text_:match("(https://t.me/joinchat/%S+)") or text_:match("(https://telegram.me/joinchat/%S+)")
+      text:match("(https://telegram.me/joinchat/%S+)")
     }
-    tdcli_function({
-      ID = "CheckChatInviteLink",
-      invite_link_ = matches[1]
-    }, check_link, {
-      link = matches[1]
-    })
+    for i, v in pairs(matches) do
+      tdcli_function({
+        ID = "CheckChatInviteLink",
+        invite_link_ = v
+      }, check_link, {link = v})
+    end
   end
 end
 function get_mod(args, data)
